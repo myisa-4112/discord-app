@@ -11,9 +11,15 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -86,11 +92,16 @@ WSGI_APPLICATION = 'studybud.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "NAME": os.getenv("DB_NAME"),
     }
 }
+
 
 
 # Password validation
@@ -149,5 +160,12 @@ MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # e.g. backend/myproject/static/
+]
 
 # WSGI_APPLICATION = 'api.wsgi.app'
